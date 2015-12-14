@@ -17,15 +17,16 @@ public class Game extends JFrame implements Runnable {
     Graphics offscr;//What is drawn onto that is then used to create the off screen image
 
     public Game() {
-        this.setSize(500,500);
+        this.setSize(1000,1000);
         this.setTitle("Maze");//Title of application
-        this.setResizable(false);
+        this.setResizable(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBackground(Color.white);
         this.setVisible(true);
         offscreenImage = createImage(this.getWidth(), this.getHeight());//Creates the off screen image using this frames dimensions
         offscr = offscreenImage.getGraphics();
         display = new Display(offscreenImage);
+        maze = new MazeGenerator(40, 40);
 
         bounceBall = new Thread(this);
         bounceBall.start();//Starts the bounceBall thread, which tells the ball to move and updates the graphics
@@ -37,7 +38,6 @@ public class Game extends JFrame implements Runnable {
     }
 
     public void run() {
-        maze = new MazeGenerator(10, 10);
         offscr = display.drawMaze(maze);
         this.repaint();
 

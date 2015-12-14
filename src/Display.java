@@ -34,8 +34,8 @@ public class Display extends JFrame{
     public void drawMazeTile(MazeTile mazeTile) {
         int x = mazeTile.getLocationX() + 2;
         int y = mazeTile.getLocationY() + 2;
-        int tileWidthAndHeight = 40;
-        int wallThickness = 2;
+        int tileWidthAndHeight = 20;
+        int wallThickness = 1;
 
         int topLeftX = (x * tileWidthAndHeight) - (tileWidthAndHeight / 2);
         int topLeftY = (y * tileWidthAndHeight) - (tileWidthAndHeight / 2);

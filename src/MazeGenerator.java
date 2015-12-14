@@ -21,10 +21,8 @@ public class MazeGenerator {
                 maze[x][y] = new MazeTile(x, y);
             }
         }
-        //int currentX = random.nextInt(sizeX);
-        //int currentY = random.nextInt(sizeY);
-        int currentX = 5;
-        int currentY = 5;
+        int currentX = random.nextInt(sizeX);
+        int currentY = random.nextInt(sizeY);
         visitTile(currentX, currentY, Directions.NONE);
     }
 
@@ -33,29 +31,38 @@ public class MazeGenerator {
         maze[x][y].setIsWallPresent(wallToRemove, false);
 
         int nextTileToVisit = random.nextInt(4);
+        int counter = 0;
 
-        if(nextTileToVisit == 0) { // Visit North
-            if(y != 0 && !maze[x][y-1].getVisited()) {
-                maze[x][y].setIsWallPresent(Directions.NORTH, false);
-                visitTile(x, y-1, Directions.SOUTH);
+        while(counter++ < 4) {
+            if(nextTileToVisit == 0) { // Visit North
+                if(y != 0 && !maze[x][y-1].getVisited()) {
+                    maze[x][y].setIsWallPresent(Directions.NORTH, false);
+                    visitTile(x, y-1, Directions.SOUTH);
+                }
             }
-        }
-        if(nextTileToVisit == 1) { // Visit EAST
-            if(x != sizeX - 1 && !maze[x+1][y].getVisited()) {
-                maze[x][y].setIsWallPresent(Directions.EAST, false);
-                visitTile(x+1, y, Directions.WEST);
+            if(nextTileToVisit == 1) { // Visit EAST
+                if(x != (sizeX - 1) && !maze[x+1][y].getVisited()) {
+                    maze[x][y].setIsWallPresent(Directions.EAST, false);
+                    visitTile(x+1, y, Directions.WEST);
+                }
             }
-        }
-        if(nextTileToVisit == 2) { // Visit SOUTH
-            if(y != sizeY - 1 && !maze[x][y+1].getVisited()) {
-                maze[x][y].setIsWallPresent(Directions.SOUTH, false);
-                visitTile(x, y+1, Directions.NORTH);
+            if(nextTileToVisit == 2) { // Visit SOUTH
+                if(y != (sizeY - 1) && !maze[x][y+1].getVisited()) {
+                    maze[x][y].setIsWallPresent(Directions.SOUTH, false);
+                    visitTile(x, y+1, Directions.NORTH);
+                }
             }
-        }
-        if(nextTileToVisit == 3) { // Visit WEST
-            if(x != 0 && !maze[x-1][y].getVisited()) {
-                maze[x][y].setIsWallPresent(Directions.WEST, false);
-                visitTile(x+1, y, Directions.EAST);
+            if(nextTileToVisit == 3) { // Visit WEST
+                if(x != 0 && !maze[x-1][y].getVisited()) {
+                    maze[x][y].setIsWallPresent(Directions.WEST, false);
+                    visitTile(x-1, y, Directions.EAST);
+                }
+            }
+            if(nextTileToVisit == 3) {
+                nextTileToVisit = 0;
+            }
+            else {
+                nextTileToVisit++;
             }
         }
     }
