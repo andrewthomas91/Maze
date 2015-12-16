@@ -1,53 +1,108 @@
 import javax.swing.JFrame;
-import java.awt.Graphics;
-import java.awt.*;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import java.awt.image.BufferStrategy;
+import java.awt.Graphics2D;
+import java.awt.Canvas;
+import javax.swing.JPanel;
+import java.awt.Dimension;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
-public class Game extends JFrame implements Runnable {
+public class Game extends Canvas {
+    private BufferStrategy strategy;
     boolean gameRunning = true;
     int currantLocationX = 0;
     int currantLocationY = 0;
-    JFrame frame = new JFrame("Maze");
     MazeGenerator maze;
-    private Display display;
-    Thread bounceBall = null;//Thread variable which will be taking care of the ball animation
-
-    Image offscreenImage;//The image off screen that is used for double buffering
-    Graphics offscr;//What is drawn onto that is then used to create the off screen image
+    Display display = new Display();
 
     public Game() {
-        this.setSize(1000,1000);
-        this.setTitle("Maze");//Title of application
-        this.setResizable(true);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setBackground(Color.white);
-        this.setVisible(true);
-        offscreenImage = createImage(this.getWidth(), this.getHeight());//Creates the off screen image using this frames dimensions
-        offscr = offscreenImage.getGraphics();
-        display = new Display(offscreenImage);
-        maze = new MazeGenerator(40, 40);
+        maze = new MazeGenerator(50, 50);
+        JFrame container = new JFrame("Maze");
 
-        bounceBall = new Thread(this);
-        bounceBall.start();//Starts the bounceBall thread, which tells the ball to move and updates the graphics
-    }
+        JPanel panel = (JPanel) container.getContentPane();
+        panel.setPreferredSize(new Dimension(500, 500));
+        panel.setLayout(null);
 
-    public void paint(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
-        g2.drawImage(offscreenImage, 0, 0, this);//Draws the off screen image to the screen (double buffering)
+        setBounds(0, 0, 500, 500);
+        panel.add(this);
+
+        setIgnoreRepaint(true);
+
+        container.pack();
+        container.setResizable(false);
+        container.setVisible(true);
+
+        container.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+        });
+
+        addKeyListener(new KeyInputHandler());
+
+        requestFocus();
+
+
+        createBufferStrategy(2);
+        strategy = getBufferStrategy();
     }
 
     public void run() {
-        offscr = display.drawMaze(maze);
-        this.repaint();
+        while (gameRunning) {
+            Graphics2D g2 = (Graphics2D) strategy.getDrawGraphics();
+            display.clear(g2);
+            display.drawMaze(maze, g2);
+            display.drawRunner(currantLocationX, currantLocationY, g2);
+            g2.dispose();
+            strategy.show();
 
-//        while(gameRunning){//This thread loops until the application is closed
-//                try{
-//                    Thread.sleep(50);//Sleeps for 20 milliseconds
-//                }
-//                catch(Exception e){
-//                    System.out.println("Error in running thread " + e);
-//                }
-//        }
+            try {
+                Thread.sleep(10);
+            } catch (Exception e) {
+                System.out.println("Error in running thread " + e);
+            }
+        }
+    }
+
+    private class KeyInputHandler extends KeyAdapter {
+        public void keyPressed(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                if(currantLocationX != 0 && !maze.getMazeTileAt(currantLocationX, currantLocationY).getIsWallPresent(Directions.WEST)) {
+                    currantLocationX--;
+                }
+            }
+            if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                if(currantLocationX != maze.getSizeX() - 1 && !maze.getMazeTileAt(currantLocationX, currantLocationY).getIsWallPresent(Directions.EAST)) {
+                    currantLocationX++;
+                }
+            }
+            if (e.getKeyCode() == KeyEvent.VK_UP) {
+                if(currantLocationY != 0 && !maze.getMazeTileAt(currantLocationX, currantLocationY).getIsWallPresent(Directions.NORTH)) {
+                    currantLocationY--;
+                }
+            }
+            if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                if(currantLocationY != maze.getSizeY() - 1 && !maze.getMazeTileAt(currantLocationX, currantLocationY).getIsWallPresent(Directions.SOUTH)) {
+                    currantLocationY++;
+                }
+            }
+        }
+
+        public void keyReleased(KeyEvent e) {
+        }
+
+        public void keyTyped(KeyEvent e) {
+            // if we hit escape, then quit the game
+            if (e.getKeyChar() == 27) {
+                System.exit(0);
+            }
+        }
+    }
+
+    public static void main(String argv[]) {
+        Game game = new Game();
+        game.run();
     }
 }

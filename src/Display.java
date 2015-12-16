@@ -1,41 +1,25 @@
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Image;
+import java.awt.*;
 import javax.swing.JFrame;
 
 public class Display extends JFrame{
-    Graphics offscr;//What is drawn onto that is then used to create the off screen image
-    Image offscreenImage;//The image off screen that is used for double buffering
-    Font boldFont;
-    Font boldHuge;
+    private int tileWidthAndHeight = 25;
+    private int wallThickness = 1;
 
-    /**
-     Constructor for the Display object.
-     @param i The image of the jFrame.
-     */
-    public Display(Image i){
-        boldFont = new Font("SansSerif", Font.BOLD, 20);
-        boldHuge = new Font("SansSerif", Font.BOLD, 40);
-        offscreenImage = i;
-        offscr = offscreenImage.getGraphics();
-        offscr.setFont(boldFont);
+    public Display(){
     }
 
-    public Graphics drawMaze(MazeGenerator maze){
+    public Graphics drawMaze(MazeGenerator maze, Graphics2D g2){
         for(int x = 0; x < maze.getSizeX(); x++) {
             for (int y = 0; y < maze.getSizeY(); y++) {
-                drawMazeTile(maze.getMazeTileAt(x,y));
+                drawMazeTile(maze.getMazeTileAt(x,y), g2);
             }
         }
-        return offscr;
+        return g2;
     }
 
-    public void drawMazeTile(MazeTile mazeTile) {
+    public void drawMazeTile(MazeTile mazeTile, Graphics2D g2) {
         int x = mazeTile.getLocationX() + 2;
         int y = mazeTile.getLocationY() + 2;
-        int tileWidthAndHeight = 20;
-        int wallThickness = 1;
 
         int topLeftX = (x * tileWidthAndHeight) - (tileWidthAndHeight / 2);
         int topLeftY = (y * tileWidthAndHeight) - (tileWidthAndHeight / 2);
@@ -46,27 +30,35 @@ public class Display extends JFrame{
         int bottomLeftX = (x * tileWidthAndHeight) - (tileWidthAndHeight / 2);
         int bottomLeftY = (y * tileWidthAndHeight) + (tileWidthAndHeight / 2);
 
-        offscr.setColor(Color.BLACK);
+        g2.setColor(Color.BLACK);
         if(mazeTile.getIsWallPresent(Directions.NORTH)) {
-            offscr.fillRect(topLeftX, topLeftY, tileWidthAndHeight, wallThickness);
+            g2.fillRect(topLeftX, topLeftY, tileWidthAndHeight, wallThickness);
         }
         if(mazeTile.getIsWallPresent(Directions.EAST)) {
-            offscr.fillRect(topRightX, topRightY, wallThickness, tileWidthAndHeight);
+            g2.fillRect(topRightX, topRightY, wallThickness, tileWidthAndHeight);
         }
         if(mazeTile.getIsWallPresent(Directions.SOUTH)) {
-            offscr.fillRect(bottomLeftX, bottomLeftY, tileWidthAndHeight, wallThickness);
+            g2.fillRect(bottomLeftX, bottomLeftY, tileWidthAndHeight, wallThickness);
         }
         if(mazeTile.getIsWallPresent(Directions.WEST)) {
-            offscr.fillRect(topLeftX, topLeftY, wallThickness, tileWidthAndHeight);
+            g2.fillRect(topLeftX, topLeftY, wallThickness, tileWidthAndHeight);
         }
     }
 
-    /**
-     Clears the screen.
-     */
-    public Graphics clear(){
-        offscr.setColor(Color.white);
-        offscr.fillRect(0, 0, 500, 500);
-        return offscr;
+    public void drawRunner(int locationX, int locationY, Graphics2D g2) {
+        int x = locationX + 2;
+        int y = locationY + 2;
+
+        int centerX = (x * tileWidthAndHeight);
+        int centerY = (y * tileWidthAndHeight);
+
+        g2.setColor(Color.RED);
+        g2.fillRect(centerX - 5, centerY - 5, 10, 10);
+    }
+
+    public Graphics clear(Graphics2D g2){
+        g2.setColor(Color.WHITE);
+        g2.fillRect(0, 0, 500, 500);
+        return g2;
     }
 }
