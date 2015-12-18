@@ -4,7 +4,7 @@ public class MazeGenerator {
     private final int sizeX;
     private final int sizeY;
     private final MazeTile[][] maze;
-    Random random = new Random();
+    private Random random = new Random();
 
     public MazeGenerator(int x, int y) {
         sizeX = x;

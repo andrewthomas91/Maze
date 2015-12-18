@@ -5,14 +5,23 @@ public class MazePiece {
     private int locationX, locationY;
     private Directions direction = Directions.NONE;
 
-    public MazePiece(int locationX, int locationY) {
-        this.locationX = locationX;
-        this.locationY = locationY;
+    public MazePiece() {
+        locationX = 0;
+        locationY = 0;
     }
 
     public MazePiece(int locationX, int locationY) {
         this.locationX = locationX;
         this.locationY = locationY;
+    }
+
+    public boolean isOnSameLocationAs(MazePiece otherPiece) {
+        if(this.locationX == otherPiece.getLocationX() && this.locationY == otherPiece.getLocationY()) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     public void generateNewFinishLocation(int mazeSize) {
@@ -20,15 +29,15 @@ public class MazePiece {
         locationY = random.nextInt(mazeSize / 2) + mazeSize / 4;
     }
 
-    public int setLocationX(int locationX) {
+    public void setLocationX(int locationX) {
         this.locationX = locationX;
     }
 
-    public int setLocationY(int locationY) {
+    public void setLocationY(int locationY) {
         this.locationY = locationY;
     }
 
-    public int setDirection(Directions direction) {
+    public void setDirection(Directions direction) {
         this.direction = direction;
     }
 
