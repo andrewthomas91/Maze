@@ -56,9 +56,51 @@ public class Display extends JFrame{
         g2.fillRect(centerX - 5, centerY - 5, 10, 10);
     }
 
+    public void drawFinish(int locationX, int locationY, Graphics2D g2) {
+        int x = locationX + 2;
+        int y = locationY + 2;
+
+        int centerX = (x * tileWidthAndHeight);
+        int centerY = (y * tileWidthAndHeight);
+
+        g2.setColor(Color.BLUE);
+        g2.fillRect(centerX - 5, centerY - 5, 10, 10);
+    }
+
+    public void drawArrow(int locationX, int locationY, Directions direction, Graphics2D g2) {
+        int x = locationX + 2;
+        int y = locationY + 2;
+
+        int centerX = (x * tileWidthAndHeight);
+        int centerY = (y * tileWidthAndHeight);
+
+        g2.setColor(Color.RED);
+
+        if(direction == Directions.NORTH) {
+            g2.drawLine(centerX, centerY + 5, centerX, centerY - 5);
+            g2.drawLine(centerX + 5, centerY, centerX, centerY - 5);
+            g2.drawLine(centerX - 5, centerY, centerX, centerY - 5);
+        }
+        if(direction == Directions.EAST) {
+            g2.drawLine(centerX - 5, centerY, centerX + 5, centerY);
+            g2.drawLine(centerX, centerY + 5, centerX + 5, centerY);
+            g2.drawLine(centerX, centerY - 5, centerX + 5, centerY);
+        }
+        if(direction == Directions.SOUTH) {
+            g2.drawLine(centerX, centerY + 5, centerX, centerY - 5);
+            g2.drawLine(centerX + 5, centerY, centerX, centerY + 5);
+            g2.drawLine(centerX - 5, centerY, centerX, centerY + 5);
+        }
+        if(direction == Directions.WEST) {
+            g2.drawLine(centerX - 5, centerY, centerX + 5, centerY);
+            g2.drawLine(centerX, centerY + 5, centerX - 5, centerY);
+            g2.drawLine(centerX, centerY - 5, centerX - 5, centerY);
+        }
+    }
+
     public Graphics clear(Graphics2D g2){
         g2.setColor(Color.WHITE);
-        g2.fillRect(0, 0, 500, 500);
+        g2.fillRect(0, 0, 750, 750);
         return g2;
     }
 }
