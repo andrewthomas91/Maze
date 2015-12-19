@@ -3,7 +3,6 @@ import javax.swing.JFrame;
 
 public class Display extends JFrame{
     private int tileWidthAndHeight = 25;
-    private int wallThickness = 1;
 
     public Display(){
     }
@@ -18,6 +17,7 @@ public class Display extends JFrame{
     }
 
     public void drawMazeTile(MazeTile mazeTile, Graphics2D g2) {
+        int wallThickness = 1;
         int x = mazeTile.getLocationX() + 2;
         int y = mazeTile.getLocationY() + 2;
 

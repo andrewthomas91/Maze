@@ -16,12 +16,7 @@ public class MazePiece {
     }
 
     public boolean isOnSameLocationAs(MazePiece otherPiece) {
-        if(this.locationX == otherPiece.getLocationX() && this.locationY == otherPiece.getLocationY()) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return this.locationX == otherPiece.getLocationX() && this.locationY == otherPiece.getLocationY();
     }
 
     public void generateNewFinishLocation(int mazeSize) {

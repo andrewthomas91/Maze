@@ -10,16 +10,15 @@ import java.util.ArrayList;
 
 public class Game extends Canvas {
     private BufferStrategy strategy;
-    private boolean gameRunning = true;
     private int mazeSize = 25;
-    private int panelSize = 750;
     private MazePiece runner = new MazePiece(0, 0);
     private MazePiece finish = new MazePiece();
-    private ArrayList<Arrow> arrows = new ArrayList();
+    private ArrayList<Arrow> arrows = new ArrayList<>();
     private MazeGenerator maze;
     private Display display = new Display();
 
     public Game() {
+        int panelSize = 750;
         maze = new MazeGenerator(mazeSize, mazeSize);
         finish.generateNewFinishLocation(mazeSize);
 
@@ -45,7 +44,7 @@ public class Game extends Canvas {
     }
 
     public void run() {
-        while (gameRunning) {
+        while (true) {
             if(runner.isOnSameLocationAs(finish)) {
                 arrows.clear();
                 runner.setLocationX(0);
