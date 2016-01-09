@@ -4,6 +4,7 @@ import java.util.Random;
 public class MazeGenerator {
     private final int sizeX;
     private final int sizeY;
+    private final int mazeTileWidthAndHeight;
     private final MazeTile[][] maze;
     private Random random = new Random();
 
@@ -11,6 +12,7 @@ public class MazeGenerator {
         sizeX = x;
         sizeY = y;
         maze = new MazeTile[sizeX][sizeY];
+        mazeTileWidthAndHeight = 25;
         generateMaze();
     }
 
@@ -81,7 +83,17 @@ public class MazeGenerator {
         return sizeY;
     }
 
+    public int getMazeTileWidthAndHeight() {
+        return mazeTileWidthAndHeight;
+    }
+
     public MazeTile getMazeTileAt(int x, int y) {
         return maze[x][y];
+    }
+
+    public MazeTile getMazeTileAt(double x, double y) {
+        int xInt = (int) x;
+        int yInt = (int) y;
+        return maze[xInt][yInt];
     }
 }

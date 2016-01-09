@@ -6,20 +6,24 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class Game extends Canvas {
     private BufferStrategy strategy;
     private int mazeSize = 25;
-    private MazePiece runner = new MazePiece(0, 0);
-    private MazePiece finish = new MazePiece();
     private ArrayList<Arrow> arrows = new ArrayList<>();
     private MazeGenerator maze;
+    private MazePiece finish = new MazePiece();
+    private MazePiece runner;
     private Display display = new Display();
 
     public Game() {
         int panelSize = 750;
         maze = new MazeGenerator(mazeSize, mazeSize);
+        runner = new MazePiece(0, 0, maze.getMazeTileWidthAndHeight());
         finish.generateNewFinishLocation(mazeSize);
 
         JFrame container = new JFrame("Maze");
@@ -38,6 +42,8 @@ public class Game extends Canvas {
             }
         });
         addKeyListener(new KeyInputHandler());
+        addMouseListener(new GameMouseListener());
+        addMouseMotionListener(new GameMouseMotionListener());
         requestFocus();
         createBufferStrategy(2);
         strategy = getBufferStrategy();
@@ -47,8 +53,7 @@ public class Game extends Canvas {
         while (true) {
             if(runner.isOnSameLocationAs(finish)) {
                 arrows.clear();
-                runner.setLocationX(0);
-                runner.setLocationY(0);
+                runner = new MazePiece(0, 0, maze.getMazeTileWidthAndHeight());
                 maze = new MazeGenerator(mazeSize, mazeSize);
             }
 
@@ -56,10 +61,10 @@ public class Game extends Canvas {
             display.clear(g2);
             display.drawMaze(maze, g2);
             for(Arrow arrow : arrows) {
-                display.drawArrow(arrow.getLocationX(), arrow.getLocationY(), arrow.getDirection(), g2);
+                display.drawArrow(arrow.getLocationX(), arrow.getLocationY(), arrow.getDirection(), maze.getMazeTileWidthAndHeight(), g2);
             }
-            display.drawFinish(finish.getLocationX(), finish.getLocationY(), g2);
-            display.drawRunner(runner.getLocationX(), runner.getLocationY(), g2);
+            display.drawFinish(finish.getLocationX(), finish.getLocationY(), maze.getMazeTileWidthAndHeight(), g2);
+            display.drawRunner(runner.getCoordinateX(), runner.getCoordinateY(), g2);
             g2.dispose();
             strategy.show();
 
@@ -71,30 +76,86 @@ public class Game extends Canvas {
         }
     }
 
+    private class GameMouseListener implements MouseListener {
+        public void mousePressed(MouseEvent e) {
+        }
+
+        public void mouseClicked(MouseEvent e) {
+        }
+
+        public void mouseReleased(MouseEvent e) {
+        }
+
+        public void mouseEntered(MouseEvent e) {
+        }
+
+        public void mouseExited(MouseEvent e) {
+        }
+    }
+
+    private class GameMouseMotionListener implements MouseMotionListener {
+        public void mouseDragged(MouseEvent e) {
+
+        }
+
+        public void mouseMoved(MouseEvent e) {
+            int tileSize = maze.getMazeTileWidthAndHeight();
+            double x = e.getX();
+            double y = e.getY();
+
+            int oldLocationX = runner.getLocationX();
+            int oldLocationY = runner.getLocationY();
+
+            int newLocationX = runner.convertCoordinateToLocation(x, tileSize);
+            int newLocationY = runner.convertCoordinateToLocation(y, tileSize);
+
+            if(oldLocationX == newLocationX && oldLocationY == newLocationY) {
+                runner.setCoordinateX(x);
+                runner.setCoordinateY(y);
+            }
+            else if(Math.abs(oldLocationX - newLocationX) <= 1 && Math.abs(oldLocationY - newLocationY) <= 1){
+                boolean moved = false;
+                if(newLocationX > oldLocationX) {
+                    moved = runner.move(maze, Directions.EAST);
+                }
+                else if(newLocationX < oldLocationX) {
+                    moved = runner.move(maze, Directions.WEST);
+                }
+
+                if(newLocationY > oldLocationY) {
+                    moved = runner.move(maze, Directions.SOUTH);
+                }
+                else if(newLocationY < oldLocationY) {
+                    moved = runner.move(maze, Directions.NORTH);
+                }
+                if(moved) {
+                    runner.setCoordinateX(x);
+                    runner.setCoordinateY(y);
+                }
+            }
+        }
+    }
+
     private class KeyInputHandler extends KeyAdapter {
         public void keyPressed(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                if(runner.getLocationX() != 0 && !maze.getMazeTileAt(runner.getLocationX(), runner.getLocationY()).getIsWallPresent(Directions.WEST)) {
-                    runner.setLocationX(runner.getLocationX() - 1);
-                    runner.setDirection(Directions.WEST);
+                if(runner.move(maze, Directions.WEST)) {
+                    runner.setCoordinateX(runner.getCoordinateX() - maze.getMazeTileWidthAndHeight());
                 }
             }
             if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                if(runner.getLocationX() != maze.getSizeX() - 1 && !maze.getMazeTileAt(runner.getLocationX(), runner.getLocationY()).getIsWallPresent(Directions.EAST)) {
-                    runner.setLocationX(runner.getLocationX() + 1);
-                    runner.setDirection(Directions.EAST);
+                if(runner.move(maze, Directions.EAST)) {
+                    runner.setCoordinateX(runner.getCoordinateX() + maze.getMazeTileWidthAndHeight());
                 }
             }
             if (e.getKeyCode() == KeyEvent.VK_UP) {
-                if(runner.getLocationY() != 0 && !maze.getMazeTileAt(runner.getLocationX(), runner.getLocationY()).getIsWallPresent(Directions.NORTH)) {
-                    runner.setLocationY(runner.getLocationY() - 1);
-                    runner.setDirection(Directions.NORTH);
+                if(runner.move(maze, Directions.NORTH)) {
+                    runner.setCoordinateY(runner.getCoordinateY() - maze.getMazeTileWidthAndHeight());
                 }
             }
             if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                if(runner.getLocationY() != maze.getSizeY() - 1 && !maze.getMazeTileAt(runner.getLocationX(), runner.getLocationY()).getIsWallPresent(Directions.SOUTH)) {
-                    runner.setLocationY(runner.getLocationY() + 1);
-                    runner.setDirection(Directions.SOUTH);
+                if(runner.move(maze, Directions.SOUTH)) {
+                    runner.setCoordinateY(runner.getCoordinateY() + maze.getMazeTileWidthAndHeight());
                 }
             }
             if (e.getKeyCode() == KeyEvent.VK_SPACE) {

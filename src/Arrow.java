@@ -1,18 +1,18 @@
 public class Arrow {
-    private int locationX, locationY;
+    private double locationX, locationY;
     private Directions direction;
 
-    public Arrow(int locationX, int locationY, Directions direction) {
+    public Arrow(double locationX, double locationY, Directions direction) {
         this.locationX = locationX;
         this.locationY = locationY;
         this.direction = direction;
     }
 
-    public int getLocationX() {
+    public double getLocationX() {
         return locationX;
     }
 
-    public int getLocationY() {
+    public double getLocationY() {
         return locationY;
     }
 

@@ -2,21 +2,20 @@ import java.awt.*;
 import javax.swing.JFrame;
 
 public class Display extends JFrame{
-    private int tileWidthAndHeight = 25;
-
     public Display(){
     }
 
     public Graphics drawMaze(MazeGenerator maze, Graphics2D g2){
+        int tileSize = maze.getMazeTileWidthAndHeight();
         for(int x = 0; x < maze.getSizeX(); x++) {
             for (int y = 0; y < maze.getSizeY(); y++) {
-                drawMazeTile(maze.getMazeTileAt(x,y), g2);
+                drawMazeTile(maze.getMazeTileAt(x,y), tileSize, g2);
             }
         }
         return g2;
     }
 
-    public void drawMazeTile(MazeTile mazeTile, Graphics2D g2) {
+    public void drawMazeTile(MazeTile mazeTile, int tileWidthAndHeight, Graphics2D g2) {
         int wallThickness = 1;
         int x = mazeTile.getLocationX() + 2;
         int y = mazeTile.getLocationY() + 2;
@@ -45,34 +44,31 @@ public class Display extends JFrame{
         }
     }
 
-    public void drawRunner(int locationX, int locationY, Graphics2D g2) {
-        int x = locationX + 2;
-        int y = locationY + 2;
-
-        int centerX = (x * tileWidthAndHeight);
-        int centerY = (y * tileWidthAndHeight);
+    public void drawRunner(double x, double y, Graphics2D g2) {
+        int centerX = (int) x;
+        int centerY = (int) y;
 
         g2.setColor(Color.RED);
-        g2.fillRect(centerX - 5, centerY - 5, 10, 10);
+        g2.fillRect(centerX - 3, centerY - 3, 6, 6);
     }
 
-    public void drawFinish(int locationX, int locationY, Graphics2D g2) {
-        int x = locationX + 2;
-        int y = locationY + 2;
+    public void drawFinish(double locationX, double locationY, int tileWidthAndHeight, Graphics2D g2) {
+        double x = locationX + 2;
+        double y = locationY + 2;
 
-        int centerX = (x * tileWidthAndHeight);
-        int centerY = (y * tileWidthAndHeight);
+        int centerX = (int) (x * tileWidthAndHeight);
+        int centerY = (int) (y * tileWidthAndHeight);
 
         g2.setColor(Color.BLUE);
         g2.fillRect(centerX - 5, centerY - 5, 10, 10);
     }
 
-    public void drawArrow(int locationX, int locationY, Directions direction, Graphics2D g2) {
-        int x = locationX + 2;
-        int y = locationY + 2;
+    public void drawArrow(double locationX, double locationY, Directions direction, int tileWidthAndHeight, Graphics2D g2) {
+        double x = locationX + 2;
+        double y = locationY + 2;
 
-        int centerX = (x * tileWidthAndHeight);
-        int centerY = (y * tileWidthAndHeight);
+        int centerX = (int) (x * tileWidthAndHeight);
+        int centerY = (int) (y * tileWidthAndHeight);
 
         g2.setColor(Color.RED);
 
